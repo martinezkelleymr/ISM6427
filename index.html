@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glass Weather</title>
+  <meta name="description" content="A glassmorphic weather app powered by the Open-Meteo API." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛅</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body data-theme="clear-day">
+  <div class="bg">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <main class="app">
+    <header class="topbar glass">
+      <form id="search-form" class="search" autocomplete="off" role="search">
+        <span class="search-icon" aria-hidden="true">🔍</span>
+        <input id="search-input" type="search" placeholder="Search city..." aria-label="Search city" />
+        <ul id="suggestions" class="suggestions glass" role="listbox" hidden></ul>
+      </form>
+      <div class="actions">
+        <button id="locate-btn" class="icon-btn" type="button" title="Use my location" aria-label="Use my location">📍</button>
+        <button id="unit-btn" class="icon-btn unit" type="button" title="Toggle units" aria-label="Toggle units">°F</button>
+      </div>
+    </header>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+
+    <section class="current glass" aria-label="Current weather">
+      <div class="current-main">
+        <div>
+          <h1 id="location">Boca Raton</h1>
+          <p id="region" class="muted">Florida, United States</p>
+          <p id="date" class="muted small"></p>
+        </div>
+        <div class="current-temp">
+          <span id="current-icon" class="big-icon" aria-hidden="true">☀️</span>
+          <div>
+            <p id="current-temp" class="temp">--°</p>
+            <p id="current-desc" class="desc">Loading…</p>
+            <p id="hi-lo" class="muted small"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="details">
+        <div class="detail glass-inner"><span class="label">Feels like</span><span id="feels" class="value">--</span></div>
+        <div class="detail glass-inner"><span class="label">Humidity</span><span id="humidity" class="value">--</span></div>
+        <div class="detail glass-inner"><span class="label">Wind</span><span id="wind" class="value">--</span></div>
+        <div class="detail glass-inner"><span class="label">UV index</span><span id="uv" class="value">--</span></div>
+        <div class="detail glass-inner"><span class="label">Pressure</span><span id="pressure" class="value">--</span></div>
+        <div class="detail glass-inner"><span class="label">Rain chance</span><span id="rain" class="value">--</span></div>
+        <div class="detail glass-inner"><span class="label">Sunrise</span><span id="sunrise" class="value">--</span></div>
+        <div class="detail glass-inner"><span class="label">Sunset</span><span id="sunset" class="value">--</span></div>
+      </div>
+    </section>
+
+    <section class="hourly glass" aria-label="Hourly forecast">
+      <h2>Next 24 hours</h2>
+      <div id="hourly" class="hourly-list"></div>
+    </section>
+
+    <section class="daily glass" aria-label="7-day forecast">
+      <h2>7-day forecast</h2>
+      <div id="daily" class="daily-list"></div>
+    </section>
+
+    <footer class="footer">
+      Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

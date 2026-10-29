@@ -9,7 +9,17 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="color-scheme" content="light dark" />
   <link rel="stylesheet" href="style.css" />
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the wrong mode.
+    (function () {
+      var pref = "system";
+      try { pref = JSON.parse(localStorage.getItem("glass-weather:theme")) || "system"; } catch (e) {}
+      var dark = pref === "dark" || (pref === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.dataset.mode = dark ? "dark" : "light";
+    })();
+  </script>
 </head>
 <body data-theme="clear-day">
   <div class="bg">
@@ -30,6 +40,23 @@
         <button id="unit-btn" class="icon-btn unit" type="button" title="Toggle units" aria-label="Toggle units">°F</button>
       </div>
     </header>
+
+    <div class="greeting-bar">
+      <div id="greeting" class="greeting">
+        <span id="greeting-text" class="greeting-text">Hello! 👋</span>
+        <button id="name-edit" class="link-btn" type="button">Add your name</button>
+        <form id="name-form" class="name-form" hidden>
+          <input id="name-input" type="text" maxlength="40" placeholder="Your name" aria-label="Your name" />
+          <button type="submit">Save</button>
+        </form>
+      </div>
+
+      <div class="theme-switch glass" role="radiogroup" aria-label="Color theme">
+        <button type="button" role="radio" data-theme-choice="light" aria-checked="false">☀️ Light</button>
+        <button type="button" role="radio" data-theme-choice="dark" aria-checked="false">🌙 Dark</button>
+        <button type="button" role="radio" data-theme-choice="system" aria-checked="false">💻 System</button>
+      </div>
+    </div>
 
     <p id="status" class="status" role="status" aria-live="polite"></p>
 

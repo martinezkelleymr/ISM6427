@@ -395,7 +395,74 @@ unitBtn.addEventListener("click", () => {
   refresh();
 });
 
+// ---------- color theme (light / dark / system) ----------
+const darkQuery = window.matchMedia("(prefers-color-scheme: dark)");
+const themeButtons = document.querySelectorAll("[data-theme-choice]");
+let themePref = load("theme") || "system";
+
+function applyTheme() {
+  const dark = themePref === "dark" || (themePref === "system" && darkQuery.matches);
+  document.documentElement.dataset.mode = dark ? "dark" : "light";
+  themeButtons.forEach((btn) => btn.setAttribute("aria-checked", String(btn.dataset.themeChoice === themePref)));
+}
+
+themeButtons.forEach((btn) =>
+  btn.addEventListener("click", () => {
+    themePref = btn.dataset.themeChoice;
+    save("theme", themePref);
+    applyTheme();
+  })
+);
+// follow the OS setting live while "System" is selected
+darkQuery.addEventListener("change", () => {
+  if (themePref === "system") applyTheme();
+});
+
+// ---------- personalized greeting ----------
+const nameForm = $("name-form");
+const nameInput = $("name-input");
+const nameEdit = $("name-edit");
+let userName = load("name") || "";
+
+function timeOfDayGreeting() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return "Good morning";
+  if (h >= 12 && h < 17) return "Good afternoon";
+  return "Good evening";
+}
+
+function renderGreeting() {
+  $("greeting-text").textContent = userName ? `${timeOfDayGreeting()}, ${userName} 👋` : `${timeOfDayGreeting()}! 👋`;
+  nameEdit.textContent = userName ? "✏️ Edit" : "Add your name";
+  nameEdit.setAttribute("aria-label", userName ? "Edit your name" : "Add your name");
+}
+
+function toggleNameForm(open) {
+  nameForm.hidden = !open;
+  nameEdit.hidden = open;
+  $("greeting-text").hidden = open;
+  if (open) {
+    nameInput.value = userName;
+    nameInput.focus();
+  }
+}
+
+nameEdit.addEventListener("click", () => toggleNameForm(true));
+nameForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  userName = nameInput.value.trim();
+  save("name", userName);
+  toggleNameForm(false);
+  renderGreeting();
+});
+nameInput.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") toggleNameForm(false);
+});
+
 // ---------- init ----------
+applyTheme();
+renderGreeting();
+setInterval(renderGreeting, 60 * 1000);
 updateUnitButton();
 refresh();
 setInterval(refresh, 10 * 60 * 1000); // keep data fresh every 10 minutes

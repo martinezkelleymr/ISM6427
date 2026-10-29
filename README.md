@@ -8,6 +8,8 @@ Default location: **Boca Raton, FL**.
 - 24-hour hourly forecast and 7-day forecast
 - City search (Open-Meteo Geocoding API) and "use my location"
 - °F / °C toggle; last city and unit are remembered
+- Light, Dark and System color themes (System follows your device setting)
+- Personalized greeting ("Good morning, Maria 👋") – add or edit your name in the app
 - Background colors change with the weather and time of day
 
 ## Files

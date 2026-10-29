@@ -422,7 +422,8 @@ darkQuery.addEventListener("change", () => {
 const nameForm = $("name-form");
 const nameInput = $("name-input");
 const nameEdit = $("name-edit");
-let userName = load("name") || "";
+const DEFAULT_NAME = "Maria";
+let userName = load("name") ?? DEFAULT_NAME;
 
 function timeOfDayGreeting() {
   const h = new Date().getHours();

@@ -27,9 +27,3 @@ python3 -m http.server 8000
 ## Deploy to Netlify
 Plain static site, no build command. Publish directory: `.` (repo root).
 Either connect this repo in Netlify, or drag the project folder into Netlify Drop.
-
----
-
-# BuildCost – Construction Materials Cost Calculator
-Lives in [`materials-calculator/`](materials-calculator/) – see its README for features and Netlify deploy steps
-(base directory: `materials-calculator`).

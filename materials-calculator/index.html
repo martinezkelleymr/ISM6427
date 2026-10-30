@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BuildCost Calculator</title>
+  <meta name="description" content="A glassmorphic construction materials cost calculator with supplier price comparison." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏗️</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="stylesheet" href="style.css" />
+  <script>
+    // Apply the saved theme before first paint to avoid a flash of the wrong mode.
+    (function () {
+      var pref = "system";
+      try { pref = JSON.parse(localStorage.getItem("buildcost:theme")) || "system"; } catch (e) {}
+      var dark = pref === "dark" || (pref === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      document.documentElement.dataset.mode = dark ? "dark" : "light";
+    })();
+  </script>
+</head>
+<body>
+  <div class="bg">
+    <span class="blob blob-1"></span>
+    <span class="blob blob-2"></span>
+    <span class="blob blob-3"></span>
+  </div>
+
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>🏗️ BuildCost</h1>
+        <p class="muted">Material quantities, prices and supplier comparison in one place.</p>
+      </div>
+      <div class="theme-switch glass" role="radiogroup" aria-label="Color theme">
+        <button type="button" role="radio" data-theme-choice="light" aria-checked="false">☀️ Light</button>
+        <button type="button" role="radio" data-theme-choice="dark" aria-checked="false">🌙 Dark</button>
+        <button type="button" role="radio" data-theme-choice="system" aria-checked="false">💻 System</button>
+      </div>
+    </header>
+
+    <!-- Step 1: quantity calculator -->
+    <section class="glass panel" aria-labelledby="calc-title">
+      <h2 id="calc-title">1 · Calculate materials</h2>
+      <div id="type-picker" class="type-picker" role="tablist" aria-label="Project type"></div>
+
+      <form id="calc-form" class="calc-form" autocomplete="off">
+        <div id="fields" class="fields"></div>
+        <div class="fields">
+          <label class="field">
+            <span>Waste allowance <small>%</small></span>
+            <input id="waste" name="waste" type="number" min="0" step="1" />
+          </label>
+          <label class="field wide">
+            <span>Label</span>
+            <input id="job-label" type="text" maxlength="60" placeholder="e.g. Garage slab" />
+          </label>
+        </div>
+
+        <div class="preview glass-inner">
+          <div class="preview-head">
+            <strong id="preview-title">Materials needed</strong>
+            <span id="preview-summary" class="muted small"></span>
+          </div>
+          <ul id="preview-list" class="preview-list"></ul>
+        </div>
+
+        <button type="submit" class="btn primary">＋ Add to project</button>
+      </form>
+    </section>
+
+    <!-- Step 2: estimate -->
+    <section class="glass panel" aria-labelledby="estimate-title">
+      <div class="panel-head">
+        <h2 id="estimate-title">2 · Project estimate</h2>
+        <div class="panel-actions">
+          <button id="export-btn" type="button" class="btn">⬇ CSV</button>
+          <button id="print-btn" type="button" class="btn">🖨 Print</button>
+          <button id="clear-btn" type="button" class="btn danger">Clear</button>
+        </div>
+      </div>
+
+      <ul id="job-list" class="job-list"></ul>
+      <p id="empty-state" class="empty muted">Add a calculation above to start your estimate.</p>
+
+      <div id="estimate-body">
+        <label class="field inline">
+          <span>Buy from</span>
+          <select id="supplier-select"></select>
+        </label>
+
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr><th>Material</th><th class="num">Qty</th><th class="num">Unit price</th><th class="supplier-col">Supplier</th><th class="num">Line total</th></tr>
+            </thead>
+            <tbody id="estimate-rows"></tbody>
+          </table>
+        </div>
+
+        <div class="totals">
+          <div class="adjusters">
+            <label class="field"><span>Sales tax <small>%</small></span><input id="tax" type="number" min="0" step="0.25" /></label>
+            <label class="field"><span>Delivery <small>$</small></span><input id="delivery" type="number" min="0" step="5" /></label>
+            <label class="field"><span>Labor <small>% of materials</small></span><input id="labor" type="number" min="0" step="5" /></label>
+            <label class="field"><span>Contingency <small>%</small></span><input id="contingency" type="number" min="0" step="1" /></label>
+          </div>
+          <dl id="totals-list" class="totals-list glass-inner"></dl>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 3: comparison -->
+    <section id="compare-section" class="glass panel" aria-labelledby="compare-title">
+      <div class="panel-head">
+        <h2 id="compare-title">3 · Compare suppliers</h2>
+        <button id="reset-prices" type="button" class="btn">Reset prices</button>
+      </div>
+      <p id="price-note" class="muted small"></p>
+      <div class="table-wrap">
+        <table class="table compare">
+          <thead id="compare-head"></thead>
+          <tbody id="compare-rows"></tbody>
+          <tfoot id="compare-foot"></tfoot>
+        </table>
+      </div>
+      <div id="compare-cards" class="compare-cards"></div>
+    </section>
+
+    <footer class="footer">Estimates use common trade rules of thumb. Confirm quantities and prices with your suppliers before ordering.</footer>
+  </main>
+
+  <script src="calculator.js"></script>
+  <script src="pricing.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
